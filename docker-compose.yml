@@ -1,9 +1,30 @@
-version: "3.7"
+version: '2'
+
 services:
-  haste-server:
-    container_name: "haste-server"
+  pastecord:
+    container_name: pastecord
+    restart: always
     build: .
+    command: npm start
+    networks:
+      - pastecord
+    ports:
+      - '7777:7777'
     volumes:
-      - type: bind
-        source: ./config.js
-        target: /usr/src/app/config.js
+      - ./etc/config.js:/pastecord/config.js
+    depends_on:
+      - pastecord_redis
+
+  pastecord_redis:
+    container_name: pastecord_redis
+    restart: always
+    image: redis:4-alpine
+    networks:
+      - pastecord
+    expose:
+      - 6379
+    volumes:
+      - ./etc/redis.conf:/etc/redis.conf
+
+networks:
+  pastecord:
