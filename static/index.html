@@ -1,9 +1,12 @@
 <html>
+
 	<head>
+
 		<title>pastecord</title>
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="discord_theme.css"/>
 		<link rel="stylesheet" type="text/css" href="application.css"/>
+		<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@1,400;1,700&display=swap" rel="stylesheet"> 
 
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<script type="text/javascript" src="highlight.min.js"></script>
@@ -12,29 +15,24 @@
 		<meta name="robots" content="noindex,nofollow"/>
 
 		<script type="text/javascript">
-			let app = null;
+			var app = null;
 			// Handle pops
-			let handlePop = function(evt){
-				let path = evt.target.location.href;
-				if (path == app.baseUrl) app.newDocument(true);
-				else app.loadDocument(path.split('/').slice(-1)[0]);
+			var handlePop = function(evt) {
+				var path = evt.target.location.pathname;
+				if (path === '/') { app.newDocument(true); }
+				else { app.loadDocument(path.substring(1, path.length)); }
 			};
 			// Set up the pop state to handle loads, skipping the first load
 			// to make chrome behave like others:
 			// http://code.google.com/p/chromium/issues/detail?id=63040
-			setTimeout(function(){
-				window.onpopstate = function(evt){
-					try { handlePop(evt); } catch(err){ /* not loaded yet */ }
+			setTimeout(function() {
+				window.onpopstate = function(evt) {
+					try { handlePop(evt); } catch(err) { /* not loaded yet */ }
 				};
 			}, 1000);
 			// Construct app and load initial path
-			$(function(){
-				let baseUrl = window.location.href.split('/');
-				// console.log(baseUrl);
-				baseUrl = baseUrl.slice(0, baseUrl.length - 1).join('/') + '/';
-				// console.log(baseUrl);
-				// baseUrl = 'https://plazatest.zneix.eu/haste/';
-				app = new haste('pastecord', { twitter: false, baseUrl: baseUrl });
+			$(function() {
+				app = new haste('pastecord', { twitter: false });
 				handlePop({ target: window });
 			});
 		</script>
@@ -45,16 +43,15 @@
 		<ul id="messages"></ul>
 
 		<div id="key">
-		  <div id="pointer" style="display: none;"></div>
-			<!-- <div id="box1"> -->
-				<!-- <a href="https://discord.gg/programming" class="logo"></a> -->
-			<!-- </div> -->
+		  <div id="pointer" style="display:none;"></div>
+			<div id="box1">
+				<a href="https://discord.gg/programming" class="logo"><span class="span">paste</span><span class="span" style="font-weight: 700;">cord</span></a>
+			</div>
 			<div id="box2">
 				<button class="save function button-picture">Save</button>
 				<button class="new function button-picture">New</button>
 				<button class="duplicate function button-picture">Duplicate & Edit</button>
 				<button class="raw function button-picture">Just Text</button>
-				<!-- <button class="twitter function button-picture">Twitter</button> -->
 			</div>
 			<div id="box3" style="display:none;">
 				<div class="label"></div>
@@ -63,7 +60,9 @@
 		</div>
 
 		<div id="linenos"></div>
-		<pre id="box" style="display: none;" class="hljs" tabindex="0"><code></code></pre>
-		<textarea spellcheck="false" style="display: none;"></textarea>
+		<pre id="box" style="display:none;" class="hljs" tabindex="0"><code></code></pre>
+		<textarea spellcheck="false" style="display:none;"></textarea>
+
 	</body>
+
 </html>

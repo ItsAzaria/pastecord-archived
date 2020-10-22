@@ -1,12 +1,32 @@
-FROM node:lts-alpine
+FROM alpine:latest
 
-RUN mkdir -p /usr/src/app
+# Update base and install required deps:
+########################################
+RUN apk update
+RUN apk add nodejs nodejs-npm git procps bash redis
 
-WORKDIR /usr/src/app
+# Clone git repo & run installer:
+#################################
+RUN /bin/bash -l -c "cd / \
+    && git clone https://github.com/seejohnrun/haste-server.git pastecord \
+    && cd pastecord \
+    && npm install"
 
-COPY . . 
+# Expose default port:
+######################
+EXPOSE 7777
 
-RUN npm run build
+# Set CWD upon launch to hastebin-server
+# install path:
+########################################
+WORKDIR /pastecord
+RUN /bin/bash -l -c "rm -rf ./static \
+    && rm -f ./about.md" 
 
-CMD ["npm", "start"]
+# Copy configs into image:
+##########################
+COPY etc/config_local_redis.js /pastecord/config.js
+COPY etc/redis_no_comments.conf /etc/redis.conf
+COPY ./static/ static/
 
+CMD redis-server /etc/redis.conf && npm start
